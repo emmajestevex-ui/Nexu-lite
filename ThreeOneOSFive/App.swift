@@ -19,7 +19,7 @@ struct NexuEliteApp: App {
     @State private var showAttribution = false
     @State private var updateOffer: AppUpdateChecker.Offer?
     @Environment(\.scenePhase) private var scenePhase
-    private let licenseGateEnabled = false
+    private let licenseGateEnabled = true
     private let licensePoller = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     init() {

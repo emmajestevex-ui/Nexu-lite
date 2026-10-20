@@ -19,10 +19,6 @@ struct ContentView: View {
                 .tabItem { CompactTabLabel(title: "Archivos", systemImage: "shippingbox.fill") }
                 .tag(AppSection.archivos.rawValue)
 
-            NexuInstallationView()
-                .tabItem { CompactTabLabel(title: "Instalación", systemImage: "wrench.and.screwdriver.fill") }
-                .tag(AppSection.instalacion.rawValue)
-
         }
         .tint(AppTheme.accent)
         .imageScale(.small)
@@ -65,7 +61,6 @@ private struct NexuHomeView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var remoteContentStore: RemoteContentStore
     @EnvironmentObject private var store: PatchProjectStore
-    @State private var showsSettings = false
     let onOpenFiles: () -> Void
 
     var body: some View {
@@ -84,22 +79,6 @@ private struct NexuHomeView: View {
             }
             .background(AppTheme.pageBackground.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showsSettings = true
-                    } label: {
-                        Image(systemName: "gearshape.fill")
-                            .font(.headline.weight(.black))
-                    }
-                    .accessibilityLabel("Configuración")
-                }
-            }
-            .sheet(isPresented: $showsSettings) {
-                NexuSettingsSheetView()
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
-            }
             .onAppear {
                 remoteContentStore.loadLocalState()
                 store.reload()
@@ -838,79 +817,6 @@ private struct NexuPatchActionAlert: Identifiable {
     let id = UUID()
     let title: String
     let message: String
-}
-
-private struct NexuInstallationView: View {
-    @Environment(\.openURL) private var openURL
-
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Instalación")
-                            .font(.system(size: 26, weight: .black, design: .rounded))
-                        Text("Solo prepara el VPN antes de usar la app.")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.top, 14)
-
-                    NexuPanel {
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack(spacing: 12) {
-                                AppRowIcon(systemName: "network", tint: AppTheme.accent, symbolSize: 18, frameSize: 46)
-                                VStack(alignment: .leading, spacing: 3) {
-                                    Text("VPN")
-                                        .font(.title3.weight(.black))
-                                    Text("Instala LocalDevVPN y luego entra para activar o revisar el túnel.")
-                                        .font(.caption.weight(.semibold))
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-
-                            Button(action: { open("https://apps.apple.com/search?term=LocalDevVPN") }) {
-                                installButtonLabel("Descargar VPN", icon: "arrow.down.circle.fill")
-                            }
-                            .buttonStyle(.plain)
-
-                            Button(action: { open("App-Prefs:root=General&path=VPN") }) {
-                                installButtonLabel("Entrar en VPN", icon: "lock.shield.fill")
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                }
-                .padding(.horizontal, 14)
-                .padding(.bottom, 36)
-            }
-            .background(AppTheme.pageBackground.ignoresSafeArea())
-            .navigationTitle("Instalación")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-
-    private func installButtonLabel(_ title: String, icon: String) -> some View {
-        HStack {
-            Image(systemName: icon)
-            Text(title)
-            Spacer()
-            Image(systemName: "arrow.up.right")
-        }
-        .font(.subheadline.weight(.black))
-        .foregroundStyle(.black)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(AppTheme.accent)
-        )
-    }
-
-    private func open(_ value: String) {
-        guard let url = URL(string: value) else { return }
-        openURL(url)
-    }
 }
 
 private struct NexuSettingsSheetView: View {

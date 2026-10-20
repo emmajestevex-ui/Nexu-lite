@@ -4,7 +4,6 @@ enum AppSection: Int, CaseIterable, Identifiable {
     case home
     case archivos
     case instalacion
-    case redes
 
     var id: Int { rawValue }
 }

@@ -102,14 +102,6 @@ struct SettingsView: View {
                     Text(language.text("settings.supported_versions_footer"))
                 }
 
-                Section(language.text("settings.social_media")) {
-                    creditsRow(
-                        name: "TikTok",
-                        role: "@gregg_top",
-                        url: "https://www.tiktok.com/@gregg_top?is_from_webapp=1&sender_device=pc"
-                    )
-                }
-
                 Section(language.text("settings.credits")) {
                     creditsRow(
                         name: "YangJiii",

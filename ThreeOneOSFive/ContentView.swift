@@ -23,9 +23,6 @@ struct ContentView: View {
                 .tabItem { CompactTabLabel(title: "Instalación", systemImage: "wrench.and.screwdriver.fill") }
                 .tag(AppSection.instalacion.rawValue)
 
-            NexuSocialView()
-                .tabItem { CompactTabLabel(title: "Redes", systemImage: "link.circle.fill") }
-                .tag(AppSection.redes.rawValue)
         }
         .tint(AppTheme.accent)
         .imageScale(.small)
@@ -80,8 +77,6 @@ private struct NexuHomeView: View {
                     mainFilesCard
                     sectionTitle("ACTUALIZACIONES")
                     updatesCard
-                    sectionTitle("REDES")
-                    compactSocialCard
                 }
                 .padding(.horizontal, 14)
                 .padding(.top, 10)
@@ -243,14 +238,6 @@ private struct NexuHomeView: View {
                     ProgressView(value: progress)
                         .tint(AppTheme.accent)
                 }
-            }
-        }
-    }
-
-    private var compactSocialCard: some View {
-        NexuPanel {
-            Link(destination: NexuSocialLink.tiktok.url) {
-                SocialRow(link: .tiktok)
             }
         }
     }
@@ -668,12 +655,6 @@ private struct NexuPatchDetailView: View {
             VStack(spacing: 14) {
                 statusCard
 
-                Link(destination: NexuSocialLink.tiktok.url) {
-                    NexuPanel {
-                        SocialRow(link: .tiktok)
-                    }
-                }
-
                 actionButton(
                     title: isWorking ? "Aplicando" : "Aplicar",
                     subtitle: "Activar archivo",
@@ -1046,70 +1027,6 @@ private struct NexuSettingsSheetView: View {
     private func open(_ value: String) {
         guard let url = URL(string: value) else { return }
         openURL(url)
-    }
-}
-
-private struct NexuSocialView: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Redes oficiales")
-                            .font(.system(size: 26, weight: .black, design: .rounded))
-                        Text("Canal privado de NEXU ELITE.")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.top, 14)
-
-                    NexuPanel {
-                        Link(destination: NexuSocialLink.tiktok.url) {
-                            SocialRow(link: .tiktok)
-                        }
-                    }
-                }
-                .padding(.horizontal, 14)
-                .padding(.bottom, 36)
-            }
-            .background(AppTheme.pageBackground.ignoresSafeArea())
-            .navigationTitle("Redes")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
-
-private enum NexuSocialLink {
-    case tiktok
-
-    var title: String { "TikTok" }
-    var subtitle: String { "@gregg_top" }
-    var systemImage: String { "play.rectangle.fill" }
-    var url: URL {
-        URL(string: "https://www.tiktok.com/@gregg_top?is_from_webapp=1&sender_device=pc")!
-    }
-}
-
-private struct SocialRow: View {
-    let link: NexuSocialLink
-
-    var body: some View {
-        HStack(spacing: 16) {
-            AppRowIcon(systemName: link.systemImage, tint: AppTheme.accent, symbolSize: 17, frameSize: 42)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(link.title)
-                    .font(.title2.weight(.black))
-                    .foregroundStyle(AppTheme.accent)
-                Text(link.subtitle)
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.accent.opacity(0.72))
-            }
-            Spacer()
-            Image(systemName: "arrow.up.right")
-                .font(.headline.weight(.black))
-                .foregroundStyle(AppTheme.accent.opacity(0.8))
-        }
-        .contentShape(Rectangle())
     }
 }
 

@@ -1,10 +1,10 @@
 import SwiftUI
 
 enum AppTheme {
-    static let accent = Color(red: 0.86, green: 0.02, blue: 0.08)
-    static let accentGlow = Color(red: 1.00, green: 0.18, blue: 0.22)
-    static let pageBackground = Color.white
-    static let consoleBackground = Color(red: 0.98, green: 0.97, blue: 0.97)
+    static let accent = Color(red: 0.43, green: 0.12, blue: 0.17)
+    static let accentGlow = Color(red: 0.58, green: 0.24, blue: 0.29)
+    static let pageBackground = Color(red: 0.965, green: 0.945, blue: 0.925)
+    static let consoleBackground = Color(red: 0.925, green: 0.895, blue: 0.875)
     static let cardBackground = Color.white
     static let pageInset: CGFloat = 16
     static let rowIconSize: CGFloat = 17

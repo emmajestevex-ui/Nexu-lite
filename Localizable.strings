@@ -247,9 +247,6 @@
 "settings.generate_token" = "Generate Token";
 "settings.token_footer" = "Available after exploit access succeeds.";
 "settings.credits" = "Credits";
-"settings.social_media" = "Social media";
-"social.github_role" = "3105 source code";
-"social.iosvn_role" = "iOSVN Community";
 "credit.yangjiii" = "Developer & designer";
 "credit.forcequit" = "bad_query exploit";
 "credit.filzaslop" = "FilzaSlop — MHA-C2 and app discovery";

@@ -3,7 +3,6 @@ import Foundation
 enum AppSection: Int, CaseIterable, Identifiable {
     case home
     case archivos
-    case instalacion
 
     var id: Int { rawValue }
 }

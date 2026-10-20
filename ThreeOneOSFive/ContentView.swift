@@ -721,7 +721,7 @@ private struct NexuPatchDetailView: View {
                 }
                 .padding(.horizontal, 14)
                 .frame(height: 48)
-                .background(Color.black.opacity(0.04), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
         }
     }
@@ -757,7 +757,7 @@ private struct NexuPatchDetailView: View {
             .frame(height: 58)
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(isPrimary ? AppTheme.accent : Color(red: 0.95, green: 0.93, blue: 0.93))
+                    .fill(isPrimary ? AppTheme.accent : Color(red: 0.07, green: 0.065, blue: 0.075))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16, style: .continuous)
                             .stroke(AppTheme.accent.opacity(isPrimary ? 0 : 0.2), lineWidth: 1)
@@ -1038,7 +1038,7 @@ private struct NexuPanel<Content: View>: View {
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 17, style: .continuous)
-                    .fill(Color.white)
+                    .fill(Color(red: 0.09, green: 0.085, blue: 0.095))
                     .overlay(
                         RoundedRectangle(cornerRadius: 17, style: .continuous)
                             .stroke(AppTheme.accent.opacity(0.28), lineWidth: 1)

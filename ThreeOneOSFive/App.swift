@@ -4,7 +4,7 @@ import Security
 import Combine
 
 @main
-struct ThreeOneOSFiveApp: App {
+struct NexuEliteApp: App {
     @StateObject private var appState = AppState()
     @StateObject private var patchDraftCoordinator = PatchDraftCoordinator()
     @StateObject private var fileOperationCoordinator = FileOperationCoordinator()
@@ -12,7 +12,7 @@ struct ThreeOneOSFiveApp: App {
     @StateObject private var patchStore = PatchProjectStore()
     @StateObject private var repositoryStore = PackageRepositoryStore()
     @State private var showOnboarding = false
-    @AppStorage("greeg.license.supabaseUnlocked") private var licenseUnlocked = false
+    @AppStorage("nexu.license.supabaseUnlocked") private var licenseUnlocked = false
     @State private var licenseMessage = ""
     @State private var licenseCheckInFlight = false
     @State private var licenseValidationPending = true
@@ -41,8 +41,8 @@ struct ThreeOneOSFiveApp: App {
     private func refreshLicenseStatus() {
         guard licenseGateEnabled else {
             let defaults = UserDefaults.standard
-            defaults.set(true, forKey: "greeg.license.supabaseUnlocked")
-            defaults.set(DeviceInstallationID.current(), forKey: "greeg.license.device")
+            defaults.set(true, forKey: "nexu.license.supabaseUnlocked")
+            defaults.set(DeviceInstallationID.current(), forKey: "nexu.license.device")
             licenseMessage = ""
             licenseValidationPending = false
             licenseUnlocked = true
@@ -51,7 +51,7 @@ struct ThreeOneOSFiveApp: App {
         }
 
         let deviceID = DeviceInstallationID.current()
-        let storedKey = UserDefaults.standard.string(forKey: "greeg.license.key")?.normalizedLicenseKey ?? ""
+        let storedKey = UserDefaults.standard.string(forKey: "nexu.license.key")?.normalizedLicenseKey ?? ""
         guard !storedKey.isEmpty else {
             licenseValidationPending = false
             if licenseUnlocked {
@@ -71,9 +71,9 @@ struct ThreeOneOSFiveApp: App {
                     licenseValidationPending = false
                     if response.success {
                         let defaults = UserDefaults.standard
-                        defaults.set(storedKey, forKey: "greeg.license.key")
-                        defaults.set(deviceID, forKey: "greeg.license.device")
-                        defaults.set(true, forKey: "greeg.license.supabaseUnlocked")
+                        defaults.set(storedKey, forKey: "nexu.license.key")
+                        defaults.set(deviceID, forKey: "nexu.license.device")
+                        defaults.set(true, forKey: "nexu.license.supabaseUnlocked")
                         licenseMessage = ""
                         licenseUnlocked = true
                         LicenseEntitlements.store(response.capabilities, expiresAt: response.expiresAt)
@@ -99,7 +99,7 @@ struct ThreeOneOSFiveApp: App {
 
     private func lockStoredLicense(message: String) {
         let defaults = UserDefaults.standard
-        defaults.set(false, forKey: "greeg.license.supabaseUnlocked")
+        defaults.set(false, forKey: "nexu.license.supabaseUnlocked")
         LicenseEntitlements.clear()
         licenseMessage = message
         licenseValidationPending = false
@@ -150,7 +150,7 @@ struct ThreeOneOSFiveApp: App {
                         }
                     }
                 } else {
-                    GreegLicenseView(initialMessage: licenseMessage) {
+                    NexuLicenseView(initialMessage: licenseMessage) {
                         licenseValidationPending = false
                         licenseUnlocked = true
                         prepareUnlockedApp()
@@ -317,7 +317,7 @@ private struct LicenseCheckingView: View {
 }
 
 
-private struct GreegLicenseView: View {
+private struct NexuLicenseView: View {
     @State private var key: String
     @State private var messageText = ""
     @State private var didActivate = false
@@ -326,7 +326,7 @@ private struct GreegLicenseView: View {
     let onSuccess: () -> Void
 
     init(initialMessage: String = "", onSuccess: @escaping () -> Void) {
-        _key = State(initialValue: UserDefaults.standard.string(forKey: "greeg.license.key")?.normalizedLicenseKey ?? "")
+        _key = State(initialValue: UserDefaults.standard.string(forKey: "nexu.license.key")?.normalizedLicenseKey ?? "")
         _messageText = State(initialValue: initialMessage)
         self.onSuccess = onSuccess
     }
@@ -340,7 +340,7 @@ private struct GreegLicenseView: View {
                     .shadow(color: AppTheme.accent.opacity(0.55), radius: 24)
 
                 VStack(spacing: 7) {
-                    Text("greeg app")
+                    Text("nexu elite")
                         .font(.system(size: 31, weight: .black, design: .rounded))
                         .foregroundStyle(.white)
                     Text("Exclusive client access")
@@ -352,7 +352,7 @@ private struct GreegLicenseView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "key.fill")
                             .foregroundStyle(AppTheme.accent)
-                        TextField("GREEG-ABCD-EF12-3456", text: $key)
+                        TextField("NEXU-ABCD-EF12-3456", text: $key)
                             .textInputAutocapitalization(.characters)
                             .autocorrectionDisabled()
                             .foregroundStyle(.white)
@@ -395,7 +395,7 @@ private struct GreegLicenseView: View {
                     .foregroundStyle(.secondary)
 
                 Spacer()
-                Text("GREEG APP - STAY PRIVATE")
+                Text("NEXU ELITE - STAY PRIVATE")
                     .font(.caption2.weight(.semibold))
                     .tracking(2)
                     .foregroundStyle(.secondary)
@@ -434,9 +434,9 @@ private struct GreegLicenseView: View {
 
             if response.success {
                 let defaults = UserDefaults.standard
-                defaults.set(normalized, forKey: "greeg.license.key")
-                defaults.set(deviceID, forKey: "greeg.license.device")
-                defaults.set(true, forKey: "greeg.license.supabaseUnlocked")
+                defaults.set(normalized, forKey: "nexu.license.key")
+                defaults.set(deviceID, forKey: "nexu.license.device")
+                defaults.set(true, forKey: "nexu.license.supabaseUnlocked")
                 LicenseEntitlements.store(response.capabilities, expiresAt: response.expiresAt)
                 didActivate = true
                 onSuccess()
@@ -448,15 +448,15 @@ private struct GreegLicenseView: View {
 }
 
 enum SupabaseLicenseConfig {
-    static let projectURL = URL(string: "https://oqpgabogasnxjejgakrt.supabase.co")!
-    static let publishableKey = "sb_publishable_yL2R4NnUAO5SBP04edbPrg_zWpPFA31"
+    static let projectURL = URL(string: "https://snatmksqzmthkusihzde.supabase.co")!
+    static let publishableKey = "sb_publishable_WxzuOAgfakLayfoiXfbb4A_Zxaos32q"
 }
 
 enum LicenseEntitlements {
     static let specialAssetIndexer = "special_assetindexer"
 
-    private static let capabilitiesKey = "greeg.license.capabilities"
-    private static let expiresAtKey = "greeg.license.expiresAt"
+    private static let capabilitiesKey = "nexu.license.capabilities"
+    private static let expiresAtKey = "nexu.license.expiresAt"
 
     static func store(_ capabilities: [String], expiresAt: String?, defaults: UserDefaults = .standard) {
         let normalized = capabilities
@@ -666,9 +666,9 @@ private extension SupabaseRPCError {
 }
 
 enum DeviceInstallationID {
-    private static let service = "com.apple.mobile.MobileHouseArrest.greeg-license"
+    private static let service = "com.apple.mobile.MobileHouseArrest.nexu-license"
     private static let account = "installation-id"
-    private static let fallbackKey = "greeg.license.installationID"
+    private static let fallbackKey = "nexu.license.installationID"
 
     static func current(defaults: UserDefaults = .standard) -> String {
         if let existing = readFromKeychain(), !existing.isEmpty {

@@ -7,7 +7,7 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: tabSelection) {
-            GreegHomeView {
+            NexuHomeView {
                 withAnimation(.easeInOut(duration: 0.18)) {
                     tabNavigation.select(AppSection.archivos.rawValue)
                 }
@@ -15,15 +15,15 @@ struct ContentView: View {
             .tabItem { CompactTabLabel(title: "Inicio", systemImage: "house.fill") }
             .tag(AppSection.home.rawValue)
 
-            GreegPatchLibraryView()
+            NexuPatchLibraryView()
                 .tabItem { CompactTabLabel(title: "Archivos", systemImage: "shippingbox.fill") }
                 .tag(AppSection.archivos.rawValue)
 
-            GreegInstallationView()
+            NexuInstallationView()
                 .tabItem { CompactTabLabel(title: "Instalación", systemImage: "wrench.and.screwdriver.fill") }
                 .tag(AppSection.instalacion.rawValue)
 
-            GreegSocialView()
+            NexuSocialView()
                 .tabItem { CompactTabLabel(title: "Redes", systemImage: "link.circle.fill") }
                 .tag(AppSection.redes.rawValue)
         }
@@ -64,7 +64,7 @@ private struct CompactTabLabel: View {
     }
 }
 
-private struct GreegHomeView: View {
+private struct NexuHomeView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var remoteContentStore: RemoteContentStore
     @EnvironmentObject private var store: PatchProjectStore
@@ -87,7 +87,7 @@ private struct GreegHomeView: View {
                 .padding(.top, 10)
                 .padding(.bottom, 36)
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(AppTheme.pageBackground.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -101,7 +101,7 @@ private struct GreegHomeView: View {
                 }
             }
             .sheet(isPresented: $showsSettings) {
-                GreegSettingsSheetView()
+                NexuSettingsSheetView()
                     .presentationDetents([.large])
                     .presentationDragIndicator(.visible)
             }
@@ -116,14 +116,14 @@ private struct GreegHomeView: View {
     }
 
     private var heroCard: some View {
-        GreegPanel {
+        NexuPanel {
             VStack(alignment: .leading, spacing: 11) {
                 HStack(spacing: 12) {
                     AppLogo(size: 48)
                         .shadow(color: AppTheme.accent.opacity(0.28), radius: 10)
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("GREEG APP")
+                        Text("NEXU ELITE")
                             .font(.system(size: 24, weight: .black, design: .rounded))
                             .lineLimit(1)
                             .minimumScaleFactor(0.68)
@@ -152,7 +152,7 @@ private struct GreegHomeView: View {
     }
 
     private var mainFilesCard: some View {
-        GreegPanel {
+        NexuPanel {
             VStack(spacing: 9) {
                 Button(action: onOpenFiles) {
                     HStack(spacing: 10) {
@@ -172,7 +172,7 @@ private struct GreegHomeView: View {
                     HomePatchRow(icon: "shippingbox.fill", title: "Sin archivos", subtitle: "Sincroniza para cargar", tint: AppTheme.accent)
                 } else {
                     ForEach(homePreviewProjects.prefix(3), id: \.id) { project in
-                        let kind = GreegPatchKind(project: project)
+                        let kind = NexuPatchKind(project: project)
                         HomePatchRow(
                             icon: kind.iconName,
                             title: project.name,
@@ -188,17 +188,17 @@ private struct GreegHomeView: View {
     private var homePreviewProjects: [PatchProject] {
         store.items
             .compactMap(\.project)
-            .filter(GreegPatchLibraryView.shouldShow)
+            .filter(NexuPatchLibraryView.shouldShow)
             .sorted { left, right in
-                let leftKind = GreegPatchKind(project: left)
-                let rightKind = GreegPatchKind(project: right)
+                let leftKind = NexuPatchKind(project: left)
+                let rightKind = NexuPatchKind(project: right)
                 if leftKind.rank != rightKind.rank { return leftKind.rank < rightKind.rank }
                 return left.name.localizedStandardCompare(right.name) == .orderedAscending
             }
     }
 
     private var updatesCard: some View {
-        GreegPanel {
+        NexuPanel {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 12) {
                     AppRowIcon(
@@ -248,8 +248,8 @@ private struct GreegHomeView: View {
     }
 
     private var compactSocialCard: some View {
-        GreegPanel {
-            Link(destination: GreegSocialLink.tiktok.url) {
+        NexuPanel {
+            Link(destination: NexuSocialLink.tiktok.url) {
                 SocialRow(link: .tiktok)
             }
         }
@@ -264,7 +264,7 @@ private struct GreegHomeView: View {
     }
 }
 
-private struct GreegPatchLibraryView: View {
+private struct NexuPatchLibraryView: View {
     @EnvironmentObject private var store: PatchProjectStore
 
     private static let featuredDisplayOrder = [
@@ -287,8 +287,8 @@ private struct GreegPatchLibraryView: View {
                 return Self.shouldShow(project)
             }
             .sorted { left, right in
-                let leftKind = GreegPatchKind(project: left.project)
-                let rightKind = GreegPatchKind(project: right.project)
+                let leftKind = NexuPatchKind(project: left.project)
+                let rightKind = NexuPatchKind(project: right.project)
                 if leftKind.rank != rightKind.rank { return leftKind.rank < rightKind.rank }
                 let leftIndex = Self.rank(for: left.project?.name)
                 let rightIndex = Self.rank(for: right.project?.name)
@@ -297,16 +297,16 @@ private struct GreegPatchLibraryView: View {
             }
     }
 
-    private var groupedItems: [GreegPatchSection] {
-        let kinds = Array(Set(visibleItems.map { GreegPatchKind(project: $0.project) }))
+    private var groupedItems: [NexuPatchSection] {
+        let kinds = Array(Set(visibleItems.map { NexuPatchKind(project: $0.project) }))
             .sorted { left, right in
                 if left.rank != right.rank { return left.rank < right.rank }
                 return left.sectionTitle.localizedStandardCompare(right.sectionTitle) == .orderedAscending
             }
 
         return kinds.compactMap { kind in
-            let items = visibleItems.filter { kind == GreegPatchKind(project: $0.project) }
-            return items.isEmpty ? nil : GreegPatchSection(kind: kind, items: items)
+            let items = visibleItems.filter { kind == NexuPatchKind(project: $0.project) }
+            return items.isEmpty ? nil : NexuPatchSection(kind: kind, items: items)
         }
     }
 
@@ -331,9 +331,9 @@ private struct GreegPatchLibraryView: View {
                                     VStack(spacing: 9) {
                                         ForEach(section.items) { item in
                                             NavigationLink {
-                                                GreegPatchDetailView(projectID: item.id)
+                                                NexuPatchDetailView(projectID: item.id)
                                             } label: {
-                                                GreegPatchRow(item: item)
+                                                NexuPatchRow(item: item)
                                             }
                                             .buttonStyle(.plain)
                                         }
@@ -347,7 +347,7 @@ private struct GreegPatchLibraryView: View {
                 .padding(.top, 10)
                 .padding(.bottom, 36)
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(AppTheme.pageBackground.ignoresSafeArea())
             .navigationTitle("Archivos")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear(perform: reloadPrivatePatches)
@@ -355,11 +355,11 @@ private struct GreegPatchLibraryView: View {
     }
 
     private var headerCard: some View {
-        GreegPanel {
+        NexuPanel {
             HStack(spacing: 12) {
                 AppLogo(size: 40)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Centro GREEG")
+                    Text("Centro NEXU")
                         .font(.headline.weight(.black))
                     Text("\(visibleItems.count) archivos privados")
                         .font(.caption.weight(.semibold))
@@ -374,7 +374,7 @@ private struct GreegPatchLibraryView: View {
     }
 
     private var emptyCard: some View {
-        GreegPanel {
+        NexuPanel {
             VStack(spacing: 13) {
                 Image(systemName: "shippingbox.fill")
                     .font(.system(size: 30, weight: .bold))
@@ -408,14 +408,14 @@ private struct GreegPatchLibraryView: View {
     }
 
     fileprivate static func shouldShow(_ project: PatchProject) -> Bool {
-        isGreegManaged(project)
+        isNexuManaged(project)
             && BundledPatchSeeder.projectIDs.contains(project.id)
             && (!project.rules.isEmpty || !project.directories.isEmpty)
     }
 
     private static func discardReason(for project: PatchProject) -> String? {
-        if !isGreegManaged(project) {
-            return "sin-metadatos-greeg"
+        if !isNexuManaged(project) {
+            return "sin-metadatos-nexu"
         }
         if project.rules.isEmpty && project.directories.isEmpty {
             return "sin-reglas-o-rutas"
@@ -423,10 +423,10 @@ private struct GreegPatchLibraryView: View {
         return nil
     }
 
-    private static func isGreegManaged(_ project: PatchProject) -> Bool {
+    private static func isNexuManaged(_ project: PatchProject) -> Bool {
         let author = project.author.lowercased()
-        return author.contains("[greeg_category:")
-            || author.contains("[greeg_style:")
+        return author.contains("[nexu_category:")
+            || author.contains("[nexu_style:")
     }
 
     private func logVisiblePatchAudit(items: [PatchLibraryItem]) {
@@ -458,27 +458,27 @@ private struct GreegPatchLibraryView: View {
     }
 }
 
-private struct GreegPatchSection: Identifiable {
-    let kind: GreegPatchKind
+private struct NexuPatchSection: Identifiable {
+    let kind: NexuPatchKind
     let items: [PatchLibraryItem]
 
     var id: String { kind.id }
 }
 
-private struct GreegPatchKind: Hashable, Identifiable {
+private struct NexuPatchKind: Hashable, Identifiable {
     let id: String
     let sectionTitle: String
-    let style: GreegPatchStyle
+    let style: NexuPatchStyle
     let rank: Int
 
     init(project: PatchProject?) {
         let author = project?.author.lowercased() ?? ""
-        let category = Self.metadataValue("greeg_category", in: author)
+        let category = Self.metadataValue("nexu_category", in: author)
         let style = Self.style(author: author, category: category, name: project?.name ?? "")
         self.init(style: style, category: category)
     }
 
-    private init(style: GreegPatchStyle, category: String?) {
+    private init(style: NexuPatchStyle, category: String?) {
         self.style = style
         switch style {
         case .antena:
@@ -501,10 +501,10 @@ private struct GreegPatchKind: Hashable, Identifiable {
         }
     }
 
-    private static func style(author: String, category: String?, name: String) -> GreegPatchStyle {
-        if author.contains("[greeg_style:antena]") { return .antena }
-        if author.contains("[greeg_style:holo]") { return .holo }
-        if author.contains("[greeg_style:aimbot-normal]") { return .aimbotNormal }
+    private static func style(author: String, category: String?, name: String) -> NexuPatchStyle {
+        if author.contains("[nexu_style:antena]") { return .antena }
+        if author.contains("[nexu_style:holo]") { return .holo }
+        if author.contains("[nexu_style:aimbot-normal]") { return .aimbotNormal }
 
         let normalizedName = name
             .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
@@ -556,7 +556,7 @@ private struct GreegPatchKind: Hashable, Identifiable {
     }
 }
 
-private enum GreegPatchStyle: String, Hashable {
+private enum NexuPatchStyle: String, Hashable {
     case antena
     case holo
     case aimbotNormal
@@ -589,15 +589,15 @@ private enum GreegPatchStyle: String, Hashable {
     }
 }
 
-private struct GreegPatchRow: View {
+private struct NexuPatchRow: View {
     let item: PatchLibraryItem
 
     private var project: PatchProject? { item.project }
     private var isApplied: Bool { DevicePatchService.latestReceipt(projectID: item.id) != nil }
-    private var kind: GreegPatchKind { GreegPatchKind(project: project) }
+    private var kind: NexuPatchKind { NexuPatchKind(project: project) }
 
     var body: some View {
-        GreegPanel {
+        NexuPanel {
             HStack(spacing: 11) {
                 AppRowIcon(
                     systemName: iconName,
@@ -607,7 +607,7 @@ private struct GreegPatchRow: View {
                 )
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(project?.name ?? "Archivo GREEG")
+                    Text(project?.name ?? "Archivo NEXU")
                         .font(.headline.weight(.black))
                         .foregroundStyle(.white)
                         .lineLimit(2)
@@ -626,7 +626,7 @@ private struct GreegPatchRow: View {
     }
 
     private var iconName: String {
-        let name = (project?.name ?? "Archivo GREEG").lowercased()
+        let name = (project?.name ?? "Archivo NEXU").lowercased()
         if name.contains("cuello") {
             return "link.circle.fill"
         }
@@ -637,11 +637,11 @@ private struct GreegPatchRow: View {
     }
 }
 
-private struct GreegPatchDetailView: View {
+private struct NexuPatchDetailView: View {
     @EnvironmentObject private var store: PatchProjectStore
     let projectID: UUID
     @State private var isWorking = false
-    @State private var actionAlert: GreegPatchActionAlert?
+    @State private var actionAlert: NexuPatchActionAlert?
 
     private var item: PatchLibraryItem? {
         store.items.first(where: { $0.id == projectID })
@@ -659,8 +659,8 @@ private struct GreegPatchDetailView: View {
         receipt != nil
     }
 
-    private var kind: GreegPatchKind {
-        GreegPatchKind(project: project)
+    private var kind: NexuPatchKind {
+        NexuPatchKind(project: project)
     }
 
     var body: some View {
@@ -668,8 +668,8 @@ private struct GreegPatchDetailView: View {
             VStack(spacing: 14) {
                 statusCard
 
-                Link(destination: GreegSocialLink.tiktok.url) {
-                    GreegPanel {
+                Link(destination: NexuSocialLink.tiktok.url) {
+                    NexuPanel {
                         SocialRow(link: .tiktok)
                     }
                 }
@@ -696,7 +696,7 @@ private struct GreegPatchDetailView: View {
             .padding(.top, 10)
             .padding(.bottom, 36)
         }
-        .background(Color.black.ignoresSafeArea())
+        .background(AppTheme.pageBackground.ignoresSafeArea())
         .navigationTitle(project?.name ?? "Archivo")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -713,12 +713,12 @@ private struct GreegPatchDetailView: View {
     }
 
     private var statusCard: some View {
-        GreegPanel {
+        NexuPanel {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 14) {
                     AppRowIcon(systemName: kind.iconName, tint: kind.tint, symbolSize: 16, frameSize: 40)
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(project?.name ?? "Archivo GREEG")
+                        Text(project?.name ?? "Archivo NEXU")
                             .font(.system(size: 24, weight: .black, design: .rounded))
                             .lineLimit(2)
                             .minimumScaleFactor(0.75)
@@ -740,7 +740,7 @@ private struct GreegPatchDetailView: View {
                 }
                 .padding(.horizontal, 14)
                 .frame(height: 48)
-                .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .background(Color.black.opacity(0.04), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
         }
     }
@@ -776,7 +776,7 @@ private struct GreegPatchDetailView: View {
             .frame(height: 58)
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(isPrimary ? AppTheme.accent : Color(red: 0.07, green: 0.065, blue: 0.075))
+                    .fill(isPrimary ? AppTheme.accent : Color(red: 0.95, green: 0.93, blue: 0.93))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16, style: .continuous)
                             .stroke(AppTheme.accent.opacity(isPrimary ? 0 : 0.2), lineWidth: 1)
@@ -800,17 +800,17 @@ private struct GreegPatchDetailView: View {
                 await MainActor.run {
                     store.reload()
                     isWorking = false
-                    actionAlert = GreegPatchActionAlert(title: "Listo", message: "Archivo aplicado correctamente.")
+                    actionAlert = NexuPatchActionAlert(title: "Listo", message: "Archivo aplicado correctamente.")
                 }
             } catch let error as PatchPackageError {
                 await MainActor.run {
                     isWorking = false
-                    actionAlert = GreegPatchActionAlert(title: "Failed", message: message(for: error))
+                    actionAlert = NexuPatchActionAlert(title: "Failed", message: message(for: error))
                 }
             } catch {
                 await MainActor.run {
                     isWorking = false
-                    actionAlert = GreegPatchActionAlert(title: "Failed", message: "No se pudo aplicar el archivo.")
+                    actionAlert = NexuPatchActionAlert(title: "Failed", message: "No se pudo aplicar el archivo.")
                 }
             }
         }
@@ -825,17 +825,17 @@ private struct GreegPatchDetailView: View {
                 await MainActor.run {
                     store.reload()
                     isWorking = false
-                    actionAlert = GreegPatchActionAlert(title: "Listo", message: "Archivo original restaurado.")
+                    actionAlert = NexuPatchActionAlert(title: "Listo", message: "Archivo original restaurado.")
                 }
             } catch let error as PatchPackageError {
                 await MainActor.run {
                     isWorking = false
-                    actionAlert = GreegPatchActionAlert(title: "Failed", message: message(for: error))
+                    actionAlert = NexuPatchActionAlert(title: "Failed", message: message(for: error))
                 }
             } catch {
                 await MainActor.run {
                     isWorking = false
-                    actionAlert = GreegPatchActionAlert(title: "Failed", message: "No se pudo restaurar el original.")
+                    actionAlert = NexuPatchActionAlert(title: "Failed", message: "No se pudo restaurar el original.")
                 }
             }
         }
@@ -853,13 +853,13 @@ private struct GreegPatchDetailView: View {
     }
 }
 
-private struct GreegPatchActionAlert: Identifiable {
+private struct NexuPatchActionAlert: Identifiable {
     let id = UUID()
     let title: String
     let message: String
 }
 
-private struct GreegInstallationView: View {
+private struct NexuInstallationView: View {
     @Environment(\.openURL) private var openURL
 
     var body: some View {
@@ -875,7 +875,7 @@ private struct GreegInstallationView: View {
                     }
                     .padding(.top, 14)
 
-                    GreegPanel {
+                    NexuPanel {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack(spacing: 12) {
                                 AppRowIcon(systemName: "network", tint: AppTheme.accent, symbolSize: 18, frameSize: 46)
@@ -903,7 +903,7 @@ private struct GreegInstallationView: View {
                 .padding(.horizontal, 14)
                 .padding(.bottom, 36)
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(AppTheme.pageBackground.ignoresSafeArea())
             .navigationTitle("Instalación")
             .navigationBarTitleDisplayMode(.inline)
         }
@@ -932,7 +932,7 @@ private struct GreegInstallationView: View {
     }
 }
 
-private struct GreegSettingsSheetView: View {
+private struct NexuSettingsSheetView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
@@ -975,7 +975,7 @@ private struct GreegSettingsSheetView: View {
                 .padding(.top, 18)
                 .padding(.bottom, 36)
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(AppTheme.pageBackground.ignoresSafeArea())
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -996,7 +996,7 @@ private struct GreegSettingsSheetView: View {
                 .font(.subheadline.weight(.bold))
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 18)
-            GreegPanel {
+            NexuPanel {
                 VStack(spacing: 0) {
                     content()
                 }
@@ -1049,7 +1049,7 @@ private struct GreegSettingsSheetView: View {
     }
 }
 
-private struct GreegSocialView: View {
+private struct NexuSocialView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -1057,14 +1057,14 @@ private struct GreegSocialView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Redes oficiales")
                             .font(.system(size: 26, weight: .black, design: .rounded))
-                        Text("Canal privado de GREEG APP.")
+                        Text("Canal privado de NEXU ELITE.")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.secondary)
                     }
                     .padding(.top, 14)
 
-                    GreegPanel {
-                        Link(destination: GreegSocialLink.tiktok.url) {
+                    NexuPanel {
+                        Link(destination: NexuSocialLink.tiktok.url) {
                             SocialRow(link: .tiktok)
                         }
                     }
@@ -1072,14 +1072,14 @@ private struct GreegSocialView: View {
                 .padding(.horizontal, 14)
                 .padding(.bottom, 36)
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(AppTheme.pageBackground.ignoresSafeArea())
             .navigationTitle("Redes")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
 
-private enum GreegSocialLink {
+private enum NexuSocialLink {
     case tiktok
 
     var title: String { "TikTok" }
@@ -1091,7 +1091,7 @@ private enum GreegSocialLink {
 }
 
 private struct SocialRow: View {
-    let link: GreegSocialLink
+    let link: NexuSocialLink
 
     var body: some View {
         HStack(spacing: 16) {
@@ -1113,7 +1113,7 @@ private struct SocialRow: View {
     }
 }
 
-private struct GreegPanel<Content: View>: View {
+private struct NexuPanel<Content: View>: View {
     @ViewBuilder let content: () -> Content
 
     var body: some View {
@@ -1121,7 +1121,7 @@ private struct GreegPanel<Content: View>: View {
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 17, style: .continuous)
-                    .fill(Color(red: 0.09, green: 0.085, blue: 0.095))
+                    .fill(Color.white)
                     .overlay(
                         RoundedRectangle(cornerRadius: 17, style: .continuous)
                             .stroke(AppTheme.accent.opacity(0.28), lineWidth: 1)
